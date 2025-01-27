@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     let activeTab;
     let hello;
+    let pageid
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         activeTab = tabs[0];
         or_tabId = activeTab.id;
@@ -176,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             console.log(hello);
             cleaned_url = hello.replace("https://", "")
+            cleaned_url = cleaned_url.replace("www.", "")
             const currentPageUrl = await encodeURIComponent(cleaned_url); 
             console.log(currentPageUrl);
 
@@ -204,18 +206,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         
     }
 
-    // Handle posting a new comment
+
     submitComment.addEventListener('click', async () => {
         const message = newCommentText.value.trim();
-
+    
         if (message === '') {
             alert('Please enter a comment');
             return;
         }
-
-        const username = 'User'; // Replace this with actual username logic
-
+        console.log("submit-debug");
+        console.log(pageid);
+        const pageId = pageid; // Assume page ID is predefined
+        const userId = 1; // Placeholder for user ID
+    
         try {
+            // Step 1: Perform sentiment analysis
             const sentimentResponse = await fetch("http://localhost:5000/api/sentiment", {
                 method: "POST",
                 headers: {
@@ -223,27 +228,57 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 body: JSON.stringify({ comment: message })
             });
-
-            if (sentimentResponse.ok) {
-                const sentimentData = await sentimentResponse.json();
-                const newComment = {
-                    id: Date.now(), // Temporary ID
-                    user_id: username,
-                    comment_content: message,
-                    sentimentScore: sentimentData.sentiment_score
-                };
-                comments.unshift(newComment);
-                renderComments(comments);
-                newCommentText.value = ''; // Clear the input field
-            } else {
+    
+            if (!sentimentResponse.ok) {
                 console.error('Failed to analyze sentiment');
+                return;
             }
+    
+            const sentimentData = await sentimentResponse.json();
+    
+            // Step 2: Send comment data to the backend (excluding sentiment score)
+            const commentPayload = {
+                Pageid: pageId,
+                Userid: userId,
+                Commentdata: message
+            };
+    
+            const commentResponse = await fetch("http://localhost:3333/create/comment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(commentPayload)
+            });
+    
+            if (!commentResponse.ok) {
+                console.error('Failed to post comment');
+                return;
+            }
+    
+            // Step 3: Dynamically update the comments section with sentiment score
+            const newComment = {
+                id: Date.now(), // Temporary ID
+                user_id: userId,
+                comment_content: message,
+                sentimentScore: sentimentData.sentiment_score // Include sentiment score for dynamic display
+            };
+            console.log("test");
+            console.log(newComment);
+
+            
+    
+            comments.unshift(newComment); // Add the new comment to the top
+            console.log(comments);
+            renderComments(comments); // Rerender the comments list
+            newCommentText.value = ''; // Clear the input field
         } catch (error) {
-            console.error('Error posting comment:', error);
+            console.error('Error:', error);
         }
     });
+    
 
-    // Sort comments
+    
     sortCommentsButton.addEventListener('click', () => {
         comments.reverse();
         renderComments(comments);

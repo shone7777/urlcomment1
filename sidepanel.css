@@ -26,7 +26,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.5;
@@ -181,12 +181,15 @@ textarea {
   align-items: center;
   font-size: 0.875rem;
   color: #6b7280;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .comment_actions {
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .action-button {
@@ -209,36 +212,92 @@ textarea {
 .show-replies {
   cursor: pointer;
   color: var(--primary-color);
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
 }
 
 .nested-comments {
   margin-top: 1rem;
   padding-left: 1.5rem;
   border-left: 2px solid var(--nested-comment-border);
+  display: none;
+}
+
+.nested-comments.active {
+  display: block;
 }
 
 .reply-form {
+  display: none;
+  margin-top: 0.5rem;
+}
+
+.reply-form.active {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
 }
 
 .reply-input {
   flex-grow: 1;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-family: inherit;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.5rem 0;
   font-size: 0.875rem;
-  background-color: var(--card-background);
+  background-color: transparent;
   color: var(--text-color);
 }
 
-.sentiment-score {
+.reply-input:focus {
+  outline: none;
+  border-bottom-color: var(--primary-color);
+}
+
+.reply-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.reply-submit,
+.reply-cancel {
+  background: none;
+  border: none;
   font-size: 0.875rem;
-  color: #6b7280;
-  margin-left: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 18px;
+}
+
+.reply-submit {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.reply-cancel {
+  color: var(--text-color);
+}
+
+.reply-submit:hover {
+  background-color: #1a73e8;
+}
+
+.reply-cancel:hover {
+  background-color: var(--hover-color);
+}
+
+.reply-button {
+  background: none;
+  border: none;
+  color: #065fd4;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 0.5rem;
+}
+
+.reply-button:hover {
+  color: #1a73e8;
 }
 
 @media (max-width: 640px) {

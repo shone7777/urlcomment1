@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Step 3: Dynamically update the comments section with sentiment score
             const newComment = {
                 id: Date.now(), // Temporary ID
-                user_id: userId,
-                comment_content: message,
+                Username: "shone",
+                Commentdata: message,
                 sentimentScore: sentimentData.sentiment_score // Include sentiment score for dynamic display
             };
             console.log("test");
